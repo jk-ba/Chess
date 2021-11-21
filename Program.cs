@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Chess {
     public static class Program {
-        public static Pos ReadPos(string prompt) {
+        public static Pos ReadPosFromConsole(string prompt) {
             Console.Write(prompt);
             var input = Console.ReadLine();
             if (input == null) {
@@ -22,8 +22,8 @@ namespace Chess {
                 board.PrintBoard();
                 try { 
                     board = board.Move(
-                        ReadPos(prompt: $"{board.Player} move from: "), 
-                        ReadPos(prompt: "Move to: "));
+                        ReadPosFromConsole(prompt: $"{board.Player} move from: "), 
+                        ReadPosFromConsole(prompt: "Move to: "));
                 }
                 catch (EndOfStreamException) {
                     return;
