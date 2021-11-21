@@ -3,12 +3,9 @@ namespace Chess {
         public PieceType Type { get; }
         public Color Color { get; }
 
-        public bool FirstMove { get; }
-
         public Piece(PieceType type, Color color) {
             Type = type;
             Color = color;
-            FirstMove = true;
         }
 
         public override bool Equals(object? obj) {

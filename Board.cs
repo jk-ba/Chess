@@ -67,10 +67,10 @@ namespace Chess {
             if (!IsValidMove(PlayerColor, from, to)) {
                 throw new IllegalMoveException("Illegal move.");
             }
-            var move = new Move(Cells[from]!, from, to, Cells[to]);
+            var move = new Move(from, to);
             var board = UncheckedMove(move);
-            if (IsCheck(PlayerColor) && board.IsCheck(PlayerColor)) {
-                throw new IllegalMoveException("Invalid move. Player still checked.");
+            if (board.IsCheck(PlayerColor)) {
+                throw new IllegalMoveException("Not allowed move, since would result in check.");
             }
             return board;
         }
@@ -82,12 +82,7 @@ namespace Chess {
                     Cells.Keys
                         .Where(to => 
                             IsValidMove(color, from, to))
-                        .Select(to => 
-                            new Move(
-                                    Cells[from]!,
-                                    from,
-                                    to,
-                                    Cells[to])));
+                        .Select(to => new Move(from, to)));
 
         private bool IsValidMove(Color color, Pos from, Pos to) {
             bool IsInside(Pos pos) =>
@@ -156,7 +151,8 @@ namespace Chess {
                     }
 
                     if (vDist == 2 && hDist == 0) {
-                        return piece.FirstMove;
+                        return (piece.Color == White && from.r == 1) ||
+                            (piece.Color == Black && from.r == 6);
                     }
 
                     return vDist == 1 && hDist == 0;
