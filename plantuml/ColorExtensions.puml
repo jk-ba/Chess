@@ -1,0 +1,5 @@
+@startuml
+class ColorExtensions <<static>> {
+    + {static} Inverted(color:Color) : Color
+}
+@enduml

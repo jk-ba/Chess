@@ -1,0 +1,57 @@
+@startuml
+class ColorExtensions <<static>> {
+    + {static} Inverted(color:Color) : Color
+}
+class IllegalMoveException {
+    + IllegalMoveException(message:string)
+}
+Exception <|-- IllegalMoveException
+class Pos <<struct>> {
+    + r : int
+    + c : int
+    + Pos(r:int, c:int)
+    + {static} Parse(text:string) : Pos
+}
+class Board {
+    + Board()
+    + Check : bool <<get>>
+    + CheckMate : bool <<get>>
+    + Move(from:Pos, to:Pos) : Board
+    + PrintBoard() : void
+}
+class "Dictionary`2"<T1,T2> {
+}
+Board --> "PlayerColor" Color
+Board --> "Cells<Pos,Piece?>" "Dictionary`2"
+enum Color {
+    White,
+    Black,
+}
+enum PieceType {
+    Pawn,
+    Knight,
+    Bishop,
+    Rook,
+    Queen,
+    King,
+}
+class Piece {
+    + FirstMove : bool <<get>>
+    + Piece(type:PieceType, color:Color)
+    + <<override>> Equals(obj:object?) : bool
+    + <<override>> ToString() : string
+    + <<override>> GetHashCode() : int
+}
+Piece --> "Type" PieceType
+Piece --> "Color" Color
+class Move <<struct>> {
+    + Move(piece:Piece, from:Pos, to:Pos, capturing:Piece?)
+    + Capturing : Piece? <<get>>
+}
+Move --> "Piece" Piece
+Move --> "From" Pos
+Move --> "To" Pos
+class Program <<static>> {
+    + {static} Main(args:string[]) : void
+}
+@enduml

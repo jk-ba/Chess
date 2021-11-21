@@ -1,0 +1,8 @@
+@startuml
+class Pos <<struct>> {
+    + r : int
+    + c : int
+    + Pos(r:int, c:int)
+    + {static} Parse(text:string) : Pos
+}
+@enduml

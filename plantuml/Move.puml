@@ -1,0 +1,9 @@
+@startuml
+class Move <<struct>> {
+    + Move(piece:Piece, from:Pos, to:Pos, capturing:Piece?)
+    + Capturing : Piece? <<get>>
+}
+Move --> "Piece" Piece
+Move --> "From" Pos
+Move --> "To" Pos
+@enduml

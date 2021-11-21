@@ -1,0 +1,13 @@
+@startuml
+class Board {
+    + Board()
+    + Check : bool <<get>>
+    + CheckMate : bool <<get>>
+    + Move(from:Pos, to:Pos) : Board
+    + PrintBoard() : void
+}
+class "Dictionary`2"<T1,T2> {
+}
+Board --> "PlayerColor" Color
+Board --> "Cells<Pos,Piece?>" "Dictionary`2"
+@enduml

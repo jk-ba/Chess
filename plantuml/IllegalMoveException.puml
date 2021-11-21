@@ -1,0 +1,6 @@
+@startuml
+class IllegalMoveException {
+    + IllegalMoveException(message:string)
+}
+Exception <|-- IllegalMoveException
+@enduml
