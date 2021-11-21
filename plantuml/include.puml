@@ -1,4 +1,7 @@
 @startuml
+class ColorExtensions <<static>> {
+    + {static} Inverted(color:Color) : Color
+}
 class IllegalMoveException {
     + IllegalMoveException(message:string)
 }
@@ -18,7 +21,7 @@ class Board {
 }
 class "Dictionary`2"<T1,T2> {
 }
-Board --> "PlayerColor" Color
+Board --> "Player" Color
 Board --> "Cells<Pos,Piece?>" "Dictionary`2"
 enum Color {
     White,
@@ -38,7 +41,15 @@ class Piece <<struct>> {
 }
 Piece --> "Type" PieceType
 Piece --> "Color" Color
+class MoveExtensions <<static>> {
+}
+class Move <<struct>> {
+    + Move(from:Pos, to:Pos)
+}
+Move --> "From" Pos
+Move --> "To" Pos
 class Program <<static>> {
+    + {static} ReadPosFromConsole(prompt:string) : Pos
     + {static} Main(args:string[]) : void
 }
 @enduml

@@ -8,6 +8,6 @@ class Board {
 }
 class "Dictionary`2"<T1,T2> {
 }
-Board --> "PlayerColor" Color
+Board --> "Player" Color
 Board --> "Cells<Pos,Piece?>" "Dictionary`2"
 @enduml

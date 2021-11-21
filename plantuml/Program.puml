@@ -1,5 +1,6 @@
 @startuml
 class Program <<static>> {
+    + {static} ReadPosFromConsole(prompt:string) : Pos
     + {static} Main(args:string[]) : void
 }
 @enduml
