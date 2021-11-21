@@ -1,9 +1,7 @@
 @startuml
-class Piece {
+class Piece <<struct>> {
     + Piece(type:PieceType, color:Color)
-    + <<override>> Equals(obj:object?) : bool
     + <<override>> ToString() : string
-    + <<override>> GetHashCode() : int
 }
 Piece --> "Type" PieceType
 Piece --> "Color" Color

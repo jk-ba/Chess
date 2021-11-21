@@ -1,4 +1,7 @@
 @startuml
+class ColorExtensions <<static>> {
+    + {static} Inverted(color:Color) : Color
+}
 class IllegalMoveException {
     + IllegalMoveException(message:string)
 }
@@ -32,14 +35,19 @@ enum PieceType {
     Queen,
     King,
 }
-class Piece {
+class Piece <<struct>> {
     + Piece(type:PieceType, color:Color)
-    + <<override>> Equals(obj:object?) : bool
     + <<override>> ToString() : string
-    + <<override>> GetHashCode() : int
 }
 Piece --> "Type" PieceType
 Piece --> "Color" Color
+class MoveExtensions <<static>> {
+}
+class Move <<struct>> {
+    + Move(from:Pos, to:Pos)
+}
+Move --> "From" Pos
+Move --> "To" Pos
 class Program <<static>> {
     + {static} Main(args:string[]) : void
 }
