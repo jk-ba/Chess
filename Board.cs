@@ -6,7 +6,7 @@ namespace Chess {
     public class Board {
         private List<Move> Moves { get; }
 
-        public Color PlayerColor => Moves.Count == 0 ? White : Cells[Moves.Last().To]!.Color.Inverted();
+        public Color PlayerColor => Moves.Count == 0 ? White : Cells[Moves.Last().To]!.Value.Color.Inverted();
         public Dictionary<Pos, Piece?> Cells { get; }
 
         public Board() {
@@ -16,15 +16,17 @@ namespace Chess {
                 Rook, Knight, Bishop, King, Queen, Bishop, Knight, Rook
             };
 
-            IEnumerable<(Pos, Piece?)> Row(int row, IEnumerable<Piece?> pieces) =>
-                pieces.Select((p, i) => (new Pos(row, i), p));
+            IEnumerable<(Pos, Piece?)> Row(int row, IEnumerable<Piece> pieces) =>
+                pieces.Select((p, i) => (new Pos(row, i), new Piece?(p)));
 
             Cells = new[] {
                 Row(0, lineup.Select(t => new Piece(t, White))),
                 Row(1, Repeat(new Piece(Pawn, White), 8))
             }
             .Concat(
-                Range(2, 4).Select(r => Row(r, Repeat((Piece?)null, 8)))
+                Range(2, 4).Select(r => 
+                    Range(0, 8).Select(c => 
+                        (new Pos(r, c), (Piece?)null)))
             )
             .Concat(new IEnumerable<(Pos, Piece?)>[] {
                 Row(6, Repeat(new Piece(Pawn, Black), 8)),
@@ -92,11 +94,11 @@ namespace Chess {
                 return false;
             }
 
-            var piece = Cells[from];
-
-            if (piece == null) {
+            if (Cells[from] == null) {
                 return false;
             }
+
+            var piece = Cells[from]!.Value;
 
             if (piece.Color != color) {
                 return false;
@@ -104,7 +106,7 @@ namespace Chess {
 
             var target = Cells[to];
 
-            if (target != null && target.Color == color) {
+            if (target?.Color == color) {
                 return false;
             }
 
@@ -147,7 +149,7 @@ namespace Chess {
                         return false;
                     }
                     if (vDist == 1 && hDist == 1) {
-                        return !(target == null || target.Color == color);
+                        return !(target?.Color == color);
                     }
 
                     if (vDist == 2 && hDist == 0) {
