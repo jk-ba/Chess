@@ -1,7 +1,4 @@
 @startuml
-class ColorExtensions <<static>> {
-    + {static} Inverted(color:Color) : Color
-}
 class IllegalMoveException {
     + IllegalMoveException(message:string)
 }
@@ -41,13 +38,6 @@ class Piece <<struct>> {
 }
 Piece --> "Type" PieceType
 Piece --> "Color" Color
-class MoveExtensions <<static>> {
-}
-class Move <<struct>> {
-    + Move(from:Pos, to:Pos)
-}
-Move --> "From" Pos
-Move --> "To" Pos
 class Program <<static>> {
     + {static} Main(args:string[]) : void
 }

@@ -3,28 +3,30 @@ using static System.Linq.Enumerable;
 using static Chess.PieceType;
 using static Chess.Color;
 using System.Linq;
+using System.IO;
 
 namespace Chess {
     public static class Program {
+        public static Pos ReadPos(string prompt) {
+            Console.Write(prompt);
+            var input = Console.ReadLine();
+            if (input == null) {
+                throw new EndOfStreamException();
+            }
+            return Pos.Parse(input);
+        }
+
         public static void Main(string[] args) {
             var board = new Board();
             while(!board.CheckMate) {
                 board.PrintBoard();
-                Pos from, to;
                 try { 
-                    Console.Write($"{board.PlayerColor} move from: ");
-                    var input = Console.ReadLine();
-                    if (input == null) {
-                        return;
-                    }
-                    from = Pos.Parse(input);
-                    Console.Write($"Move to: ");
-                    input = Console.ReadLine();
-                    if (input == null) {
-                        return;
-                    }
-                    to = Pos.Parse(input);
-                    board = board.Move(from, to);
+                    board = board.Move(
+                        ReadPos(prompt: $"{board.Player} move from: "), 
+                        ReadPos(prompt: "Move to: "));
+                }
+                catch (EndOfStreamException) {
+                    return;
                 }
                 catch (Exception e) {
                     Console.WriteLine(e.Message);

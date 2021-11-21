@@ -6,7 +6,7 @@ namespace Chess {
     public class Board {
         private List<Move> Moves { get; }
 
-        public Color PlayerColor => Moves.Count == 0 ? White : Cells[Moves.Last().To]!.Value.Color.Inverted();
+        public Color Player => Moves.Count == 0 ? White : Cells[Moves.Last().To]!.Value.Color.Inverted();
         public Dictionary<Pos, Piece?> Cells { get; }
 
         public Board() {
@@ -46,14 +46,14 @@ namespace Chess {
         private bool IsCheck(Color color) {
             var otherColor = color.Inverted();
             var kingPos = Cells.Keys
-                .Where(p => Cells[p]?.Equals(new Piece(King, PlayerColor)) ?? false)
+                .Where(p => Cells[p]?.Equals(new Piece(King, Player)) ?? false)
                 .First();
             return Cells.Keys
                 .Where(p => IsValidMove(otherColor, p, kingPos))
                 .Any();
         }
 
-        public bool Check => IsCheck(PlayerColor);
+        public bool Check => IsCheck(Player);
 
         private bool IsCheckMate(Color color) =>
             IsCheck(color) && 
@@ -61,17 +61,17 @@ namespace Chess {
                 .Select(m => UncheckedMove(m))
                 .All(b => b.IsCheck(color));
         
-        public bool CheckMate => IsCheckMate(PlayerColor);
+        public bool CheckMate => IsCheckMate(Player);
 
         private Board UncheckedMove(Move move) => new Board(this, move);
 
         public Board Move(Pos from, Pos to) {
-            if (!IsValidMove(PlayerColor, from, to)) {
+            if (!IsValidMove(Player, from, to)) {
                 throw new IllegalMoveException("Illegal move.");
             }
             var move = new Move(from, to);
             var board = UncheckedMove(move);
-            if (board.IsCheck(PlayerColor)) {
+            if (board.IsCheck(Player)) {
                 throw new IllegalMoveException("Not allowed move, since would result in check.");
             }
             return board;
@@ -185,10 +185,10 @@ namespace Chess {
             }
             Console.BackgroundColor = netural;
             Console.WriteLine("   a  b  c  d  e  f  g  h");
-            if (IsCheckMate(PlayerColor)) {
-                Console.WriteLine($"{PlayerColor} is checkmate.");
-            } else if (IsCheck(PlayerColor)) {
-                Console.WriteLine($"{PlayerColor} is checked.");
+            if (IsCheckMate(Player)) {
+                Console.WriteLine($"{Player} is checkmate.");
+            } else if (IsCheck(Player)) {
+                Console.WriteLine($"{Player} is checked.");
             }
         }
     }
