@@ -36,7 +36,6 @@ enum PieceType {
     King,
 }
 class Piece {
-    + FirstMove : bool <<get>>
     + Piece(type:PieceType, color:Color)
     + <<override>> Equals(obj:object?) : bool
     + <<override>> ToString() : string
@@ -44,11 +43,11 @@ class Piece {
 }
 Piece --> "Type" PieceType
 Piece --> "Color" Color
-class Move <<struct>> {
-    + Move(piece:Piece, from:Pos, to:Pos, capturing:Piece?)
-    + Capturing : Piece? <<get>>
+class MoveExtensions <<static>> {
 }
-Move --> "Piece" Piece
+class Move <<struct>> {
+    + Move(from:Pos, to:Pos)
+}
 Move --> "From" Pos
 Move --> "To" Pos
 class Program <<static>> {

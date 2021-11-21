@@ -1,6 +1,5 @@
 @startuml
 class Piece {
-    + FirstMove : bool <<get>>
     + Piece(type:PieceType, color:Color)
     + <<override>> Equals(obj:object?) : bool
     + <<override>> ToString() : string
