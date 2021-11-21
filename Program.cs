@@ -17,12 +17,12 @@ namespace Chess {
         }
 
         public static void Main(string[] args) {
-            var board = new Board();
-            while(!board.CheckMate) {
-                board.PrintBoard();
+            var game = new Game();
+            while(!game.CheckMate) {
+                game.Print();
                 try { 
-                    board = board.Move(
-                        ReadPosFromConsole(prompt: $"{board.Player} move from: "), 
+                    game.Move(
+                        ReadPosFromConsole(prompt: $"{game.PlayerColor} move from: "), 
                         ReadPosFromConsole(prompt: "Move to: "));
                 }
                 catch (EndOfStreamException) {

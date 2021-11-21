@@ -3,15 +3,11 @@ using static Chess.PieceType;
 using static System.Linq.Enumerable;
 
 namespace Chess {
-    public class Board {
-        private List<Move> Moves { get; }
+    internal class Board {
 
-        public Color Player => Moves.Count == 0 ? White : Cells[Moves.Last().To]!.Value.Color.Inverted();
-        public Dictionary<Pos, Piece?> Cells { get; }
+        internal Dictionary<Pos, Piece?> Cells { get; }
 
         public Board() {
-            Moves = new List<Move>();
-
             var lineup = new[] {
                 Rook, Knight, Bishop, King, Queen, Bishop, Knight, Rook
             };
@@ -36,141 +32,20 @@ namespace Chess {
             .ToDictionary(x => x.Item1, x => x.Item2);
         }
 
-        private Board(Board previous, Move move) {
+        internal Board(Board previous, Move move) {
             Cells = new Dictionary<Pos, Piece?>(previous.Cells);
-            Moves = previous.Moves.Append(move).ToList();
             Cells[move.To] = Cells[move.From];
             Cells[move.From] = null;
         }
 
-        private bool IsCheck(Color color) {
-            var otherColor = color.Inverted();
-            var kingPos = Cells.Keys
-                .Where(p => Cells[p]?.Equals(new Piece(King, Player)) ?? false)
-                .First();
-            return Cells.Keys
-                .Where(p => IsValidMove(otherColor, p, kingPos))
-                .Any();
+        internal Board Move(Move move) {
+            if (Cells[move.From] == null) {
+                throw new IllegalMoveException("No piece to move in this cell.");
+            }
+            return new Board(this, move);
         }
 
-        public bool Check => IsCheck(Player);
-
-        private bool IsCheckMate(Color color) =>
-            IsCheck(color) && 
-            AllValidMoves(color)
-                .Select(m => UncheckedMove(m))
-                .All(b => b.IsCheck(color));
-        
-        public bool CheckMate => IsCheckMate(Player);
-
-        private Board UncheckedMove(Move move) => new Board(this, move);
-
-        public Board Move(Pos from, Pos to) {
-            if (!IsValidMove(Player, from, to)) {
-                throw new IllegalMoveException("Illegal move.");
-            }
-            var move = new Move(from, to);
-            var board = UncheckedMove(move);
-            if (board.IsCheck(Player)) {
-                throw new IllegalMoveException("Not allowed move, since would result in check.");
-            }
-            return board;
-        }
-
-        private IEnumerable<Move> AllValidMoves(Color color) =>
-            Cells.Keys
-                .Where(p => Cells[p]?.Color == color)
-                .SelectMany(from => 
-                    Cells.Keys
-                        .Where(to => 
-                            IsValidMove(color, from, to))
-                        .Select(to => new Move(from, to)));
-
-        private bool IsValidMove(Color color, Pos from, Pos to) {
-            bool IsInside(Pos pos) =>
-                pos.r >= 0 && pos.r < 8 && pos.c >= 0 && pos.c < 8;
-
-            if (!IsInside(from) || !IsInside(to)) {
-                return false;
-            }
-
-            if (Cells[from] == null) {
-                return false;
-            }
-
-            var piece = Cells[from]!.Value;
-
-            if (piece.Color != color) {
-                return false;
-            }
-
-            var target = Cells[to];
-
-            if (target?.Color == color) {
-                return false;
-            }
-
-            int vDist = Math.Abs(from.r - to.r);
-            int hDist = Math.Abs(from.c - to.c);
-
-            if (vDist == 0 && hDist == 0) {
-                return false;
-            }
-
-            if (piece.Type == Knight) {
-                return ((vDist == 2 && hDist == 1)
-                        || (vDist == 1 && hDist == 2));
-            }
-
-            if (!(vDist == hDist || vDist == 0 || hDist == 0)) {
-                return false;
-            }
-
-            int vDir = vDist == 0 ? 0 : (to.r - from.r) / vDist;
-            int hDir = hDist == 0 ? 0 : (to.c - from.c) / hDist;
-
-            var diagonalMove = vDist > 0 && hDist > 0;
-
-            var lineOfSight = new List<Pos>();
-            Pos pos = (from.r + vDir, from.c + hDir);
-            while (!pos.Equals(to)) {
-                lineOfSight.Add(pos);
-                pos = (pos.r + vDir, pos.c + hDir);
-            }
-
-            if (!lineOfSight.All(p => Cells[p] == null)) {
-                return false;
-            }
-
-            switch (piece.Type) {
-                case Pawn:
-                    if ((piece.Color == White && vDir != 1) ||
-                        (piece.Color == Black && vDir != -1)) {
-                        return false;
-                    }
-                    if (vDist == 1 && hDist == 1) {
-                        return !(target?.Color == color);
-                    }
-
-                    if (vDist == 2 && hDist == 0) {
-                        return (piece.Color == White && from.r == 1) ||
-                            (piece.Color == Black && from.r == 6);
-                    }
-
-                    return vDist == 1 && hDist == 0;
-                case Bishop:
-                    return diagonalMove;
-                case Rook:
-                    return !diagonalMove;
-                case Queen:
-                    return true;
-                case King:
-                    return Math.Max(vDist, hDist) <= 1;
-            }
-            return false;
-        }
-
-        public void PrintBoard() {
+        public void Print() {
             var netural = Console.BackgroundColor;
             for (int r = 7; r >= 0; --r) {
                 Console.BackgroundColor = netural;
@@ -185,11 +60,6 @@ namespace Chess {
             }
             Console.BackgroundColor = netural;
             Console.WriteLine("   a  b  c  d  e  f  g  h");
-            if (IsCheckMate(Player)) {
-                Console.WriteLine($"{Player} is checkmate.");
-            } else if (IsCheck(Player)) {
-                Console.WriteLine($"{Player} is checked.");
-            }
         }
     }
 }
